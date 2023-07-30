@@ -1,5 +1,4 @@
-pack.zip
-device_support.zip
+*.zip
 file
 unpack
-dist
+device_support

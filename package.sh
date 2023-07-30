@@ -9,25 +9,50 @@
 # See http://packs.download.atmel.com
 # Example URL: http://packs.download.atmel.com/Atmel.SAMC21_DFP.1.2.176.atpack
 
-rm -rf dist unpack
+rm -rf device_support unpack
 mkdir -p unpack
 
 for pack in $(cat packs); do
-  curl -L $pack > pack.zip
-  (cd unpack && unzip -o ../pack.zip)
+  url=$(echo $pack | cut -d '!' -f 1)
+  name=$(echo $pack | cut -d '!' -f 2)
+  curl -L $url -o $name.zip
+  mkdir -p unpack/$name
+  (cd unpack/$name && unzip -o ../../$name.zip)
 done
 
-mkdir -p dist
+mkdir -p device_support
 
-mkdir -p dist/avr
-mv unpack/include dist/avr/include
+mkdir -p device_support/atmega
+mv unpack/atmega/include device_support/atmega
 
-ARM_DIRS="samc21 samc21n samd21a samd21b samd21c samd21d"
+mkdir -p device_support/samc21
+mv unpack/samc21/samc21/include device_support/samc21
+mv unpack/samc21/samc21/svd device_support/samc21
 
-for i in $ARM_DIRS; do
-  mkdir -p dist/$i
-  mv unpack/$i/include dist/$i
-  mv unpack/$i/svd dist/$i
-done
+mkdir -p device_support/samd21a
+mv unpack/samd21/samd21a/include device_support/samd21a
+mv unpack/samd21/samd21a/svd device_support/samd21a
+mkdir -p device_support/samd21b
+mv unpack/samd21/samd21b/include device_support/samd21b
+mv unpack/samd21/samd21b/svd device_support/samd21b
+mkdir -p device_support/samd21c
+mv unpack/samd21/samd21c/include device_support/samd21c
+mv unpack/samd21/samd21c/svd device_support/samd21c
+mkdir -p device_support/samd21d
+mv unpack/samd21/samd21d/include device_support/samd21d
+mv unpack/samd21/samd21d/svd device_support/samd21d
 
-zip -r device_support.zip dist
+mkdir -p device_support/same51
+mv unpack/same51/include device_support/same51
+mv unpack/same51/svd device_support/same51
+
+mkdir -p device_support/CMSIS/Core device_support/CMSIS/Core/Lib
+mv unpack/cmsis/CMSIS/Core/Include device_support/CMSIS/Core 
+# Note: libarm_cortexM0l_math.a is a prebuilt DSP library, but does not have LTO and may use libc.
+# Note for future reference, the Neural Network library appears to be here and intact.
+# Also, we should look into building the DSP library with LTO, it looks useful.
+
+cp meson.build device_support
+
+zip -r device_support.zip device_support
+openssl dgst -sha256 device_support.zip

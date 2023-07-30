@@ -1,3 +1,5 @@
-http://packs.download.atmel.com/Atmel.ATmega_DFP.2.0.401.atpack
-http://packs.download.atmel.com/Atmel.SAMC21_DFP.1.2.176.atpack
-http://packs.download.atmel.com/Atmel.SAMD21_DFP.1.3.395.atpack
+http://packs.download.atmel.com/Atmel.ATmega_DFP.2.0.401.atpack!atmega
+http://packs.download.atmel.com/Atmel.SAMC21_DFP.1.2.176.atpack!samc21
+http://packs.download.atmel.com/Atmel.SAMD21_DFP.1.3.395.atpack!samd21
+http://packs.download.atmel.com/Atmel.SAME51_DFP.1.1.139.atpack!same51
+http://packs.download.atmel.com/ARM.CMSIS.5.4.0.atpack!cmsis
