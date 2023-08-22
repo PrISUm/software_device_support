@@ -13,6 +13,9 @@ foreach sam : ['samc21', 'samd21a', 'samd21b', 'samd21c', 'samd21d']
         '-I' + (meson.current_source_dir() / 'CMSIS' / 'Core' / 'Include'),
         '-DDONT_USE_CMSIS_INIT'
       ],
+      link_args: [
+        meson.current_source_dir() / 'lib' / 'libclang_rt.builtins-armv6m.a'
+      ],
       variables: {
         'svd_dir': meson.current_source_dir() / sam / 'svd'
       }
@@ -23,7 +26,10 @@ endforeach
 
 
 device_support = {
-  'avr': declare_dependency(
-    compile_args: '-I' + (meson.current_source_dir() / 'avr' / 'include')
+  'atmega328p': declare_dependency(
+    compile_args: '-I' + (meson.current_source_dir() / 'avr' / 'include'),
+    link_args: [
+      meson.current_source_dir() / 'lib' / 'libclang_rt.builtins-avr-atmega328p.a'
+    ],
   ),
 } + sam_support

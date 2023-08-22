@@ -54,5 +54,10 @@ mv unpack/cmsis/CMSIS/Core/Include device_support/CMSIS/Core
 
 cp meson.build device_support
 
+# Build and add compiler-rt libraries
+./compiler_rt.sh
+mkdir -p device_support/lib
+cp libclang_rt.builtins-armv6m.a libclang_rt.builtins-avr-atmega328p.a device_support/lib/
+
 zip -r device_support.zip device_support
 openssl dgst -sha256 device_support.zip
