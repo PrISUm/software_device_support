@@ -18,5 +18,6 @@ Note: You need a working `zip`, `openssl`, and `7zz` (7-Zip) installation to run
 To release, just run `./package.sh`. Everything should automatically build. Docker is required to build compiler_rt libraries. Expect it to take a while.
 
 ## TODO
-[] - Add a stripped-down version of newlib for memcpy,strcpy,sprintf,etc... (Maybe custom implementation is preferred?)
-[] - Add semihosting support?
+- [ ] Add a stripped-down version of newlib for memcpy,strcpy,sprintf,etc... (Maybe custom implementation is preferred?)
+- [ ] Add semihosting support?
+- [ ] CI/CD this repo
