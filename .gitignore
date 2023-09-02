@@ -1,11 +1,7 @@
-*.zip
-file
-unpack
-device_support
-
 *
 !compiler_rt.sh
 !geturls.sh
+!lld_win_elf.sh
 !meson.build
 !package.sh
 !README.md

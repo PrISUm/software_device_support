@@ -59,5 +59,7 @@ cp meson.build device_support
 mkdir -p device_support/lib
 cp libclang_rt.builtins-armv6m.a libclang_rt.builtins-avr-atmega328p.a device_support/lib/
 
+# Get a Windows ELF linker
+
 zip -r device_support.zip device_support
 openssl dgst -sha256 device_support.zip

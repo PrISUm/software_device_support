@@ -13,6 +13,8 @@ then run package.sh. Ensure the final dist has include and svd folders for each 
 then upload the device_support.zip file as a release binary.
 
 ## Packaging
+Note: You need a working `zip`, `openssl`, and `7zz` (7-Zip) installation to run package.sh.
+
 To release, just run `./package.sh`. Everything should automatically build. Docker is required to build compiler_rt libraries. Expect it to take a while.
 
 ## TODO
