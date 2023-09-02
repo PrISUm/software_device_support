@@ -1,0 +1,6 @@
+project('lld_win_elf')
+
+# -B flag prepends the path to the search path for the linker exe.
+lld_cross = declare_dependency(
+  link_args: '-B' + meson.current_source_dir()
+)

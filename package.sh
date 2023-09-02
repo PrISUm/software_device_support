@@ -52,7 +52,7 @@ mv unpack/cmsis/CMSIS/Core/Include device_support/CMSIS/Core
 # Note for future reference, the Neural Network library appears to be here and intact.
 # Also, we should look into building the DSP library with LTO, it looks useful.
 
-cp meson.build device_support
+cp device_support.meson device_support/meson.build
 
 # Build and add compiler-rt libraries
 ./compiler_rt.sh
@@ -62,9 +62,10 @@ cp libclang_rt.builtins-armv6m.a libclang_rt.builtins-avr-atmega328p.a device_su
 # Get a Windows ELF linker
 ./lld_win_elf
 mkdir -p lld_win_elf
-cp llvm_win/bin/ld.lld.exe llvm_win_elf
+cp llvm_win/bin/ld.lld.exe lld_win_elf
+cp lld_win_elf.meson lld_win_elf/meson.build
 
-zip -r lld_win_elf.zip llvm_win_elf
+zip -r lld_win_elf.zip lld_win_elf
 zip -r device_support.zip device_support
 openssl dgst -sha256 lld_win_elf.zip
 openssl dgst -sha256 device_support.zip
