@@ -1,4 +1,4 @@
-*
+/*
 !device_support.meson
 !lld_win_elf.meson
 !compiler_rt.sh
@@ -8,3 +8,4 @@
 !package.sh
 !README.md
 !packs
+!docker
