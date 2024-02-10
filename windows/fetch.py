@@ -5,13 +5,15 @@ import re
 import shutil
 import subprocess
 import urllib.request
-from tarfile import TarFile
+from tarfile import TarFile, TarInfo
 from concurrent.futures import ThreadPoolExecutor
 
 """
 This program fetches MSYS2 packages from the MSYS2 repository, extracts them,
 and creates a nice directory structure and zip bundle with all the dependencies.
 """
+
+TOOLCHAIN_VERSION = '1.0.6-rc3'
 
 ENVIRONMENT = 'ucrt64'
 PREFIX = 'mingw-w64-ucrt-x86_64'
@@ -135,20 +137,28 @@ def add_github_llvm_lld(dest: str):
   os.rename('bin/ld.lld.exe', os.path.join(dest, 'bin', 'ld.lld.exe'))
 
 def compress_package(out: str, dir: str):
+  def fix_permissions(tinfo: TarInfo):
+    tinfo.uid = 0
+    tinfo.gid = 0
+    # Make sure every file is readable and writeable at least
+    tinfo.mode |= 0o600
+    return tinfo
+
+  print('Compressing final archive. This will take a while.')
   with TarFile.gzopen(out, 'w') as tar:
     for s in os.scandir(dir):
-      tar.add(s.path, s.name)
+      tar.add(s.path, s.name, filter=fix_permissions)
 
 def trim_extraction(dir: str):
   # Remove share, and etc folders from the package, those aren't needed.
   shutil.rmtree(os.path.join(dir, 'share'))
-  shutil.rmtree(os.path.join(dir, 'etc'))
+  # shutil.rmtree(os.path.join(dir, 'etc'))
 
+def add_version_file(dir: str):
+  with open(os.path.join(dir, 'VERSION'), 'w+') as f:
+    f.write(TOOLCHAIN_VERSION)
 
-
-
-
-with fetch_package_index(True) as tar:
+with fetch_package_index(False) as tar:
   # 'clang-tools-extra', 
   deps = get_dependencies_recursive(tar, 'clang', 'lld', 'openocd', 'gdb-multiarch', 'meson', 'ninja', 'ca-certificates')
   fetch_packages(deps)
@@ -156,6 +166,7 @@ with fetch_package_index(True) as tar:
   extract_packages(deps, 'extract')
   trim_extraction('extract/ucrt64')
   add_github_llvm_lld('extract/ucrt64')
+  add_version_file('extract/ucrt64')
   compress_package('windows.tar.gz', 'extract/ucrt64')
 
 
