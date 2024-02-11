@@ -13,7 +13,7 @@ This program fetches MSYS2 packages from the MSYS2 repository, extracts them,
 and creates a nice directory structure and zip bundle with all the dependencies.
 """
 
-TOOLCHAIN_VERSION = '1.0.6-rc3'
+TOOLCHAIN_VERSION = '1.0.6-rc4'
 
 ENVIRONMENT = 'ucrt64'
 PREFIX = 'mingw-w64-ucrt-x86_64'
@@ -29,7 +29,7 @@ def fetch_package_index(fetch=True):
     urllib.request.urlretrieve(url, db_name)
 
     # Extract one layer to get the tar archive
-    subprocess.check_output(f'zstd -d {db_name} -o {db_name}.tar', shell=True)
+    subprocess.check_output(f'zstd -f -d {db_name} -o {db_name}.tar', shell=True)
 
   # Open the tar archive for use and return it
   return TarFile(f'{db_name}.tar')
@@ -135,6 +135,7 @@ def add_github_llvm_lld(dest: str):
   
   subprocess.check_output(['7zz', 'x', path, 'bin/ld.lld.exe'])
   os.rename('bin/ld.lld.exe', os.path.join(dest, 'bin', 'ld.lld.exe'))
+  os.rmdir('bin')
 
 def compress_package(out: str, dir: str):
   def fix_permissions(tinfo: TarInfo):
@@ -152,15 +153,15 @@ def compress_package(out: str, dir: str):
 def trim_extraction(dir: str):
   # Remove share, and etc folders from the package, those aren't needed.
   shutil.rmtree(os.path.join(dir, 'share'))
-  # shutil.rmtree(os.path.join(dir, 'etc'))
+  shutil.rmtree(os.path.join(dir, 'etc'))
 
 def add_version_file(dir: str):
   with open(os.path.join(dir, 'VERSION'), 'w+') as f:
     f.write(TOOLCHAIN_VERSION)
 
-with fetch_package_index(False) as tar:
+with fetch_package_index(True) as tar:
   # 'clang-tools-extra', 
-  deps = get_dependencies_recursive(tar, 'clang', 'lld', 'openocd', 'gdb-multiarch', 'meson', 'ninja', 'ca-certificates')
+  deps = get_dependencies_recursive(tar, 'clang', 'lld', 'openocd', 'gdb-multiarch', 'meson', 'ninja', 'python-certifi')
   fetch_packages(deps)
   if os.path.exists('extract'): shutil.rmtree('extract')
   extract_packages(deps, 'extract')
@@ -168,8 +169,3 @@ with fetch_package_index(False) as tar:
   add_github_llvm_lld('extract/ucrt64')
   add_version_file('extract/ucrt64')
   compress_package('windows.tar.gz', 'extract/ucrt64')
-
-
-# Windows
-#subprocess.check_output(["powershell.exe", "[System.Environment]::GetEnvironmentVariable('Path', 'User')"], encoding='ascii')
-#subprocess.check_output(["powershell.exe", "[System.Environment]::SetEnvironmentVariable('Path', 'new-path', 'User')"], encoding='ascii')
