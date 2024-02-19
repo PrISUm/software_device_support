@@ -6,7 +6,7 @@ import shutil
 import subprocess
 import time
 import urllib.request
-from tarfile import TarFile, TarInfo
+from tarfile import TarFile, TarInfo, LNKTYPE, SYMTYPE
 from concurrent.futures import ThreadPoolExecutor
 
 """
@@ -14,7 +14,7 @@ This program fetches MSYS2 packages from the MSYS2 repository, extracts them,
 and creates a nice directory structure and zip bundle with all the dependencies.
 """
 
-TOOLCHAIN_VERSION = '1.0.6'
+TOOLCHAIN_VERSION = '1.0.7-pre1'
 LLVM_VERSION='17.0.5'
 PYTHON_VERSION='python3.11'
 
@@ -182,6 +182,8 @@ def compress_package(out: str, dir: str):
     tinfo.gid = 0
     # Make sure every file is readable and writeable at least
     tinfo.mode |= 0o600
+    if tinfo.type == LNKTYPE:
+      tinfo.type = SYMTYPE
     return tinfo
 
   print('Compressing final archive. This will take a while.')
@@ -191,7 +193,8 @@ def compress_package(out: str, dir: str):
 
 def trim_extraction(dir: str):
   # Remove share folder from the package, those aren't needed.
-  shutil.rmtree(os.path.join(dir, 'share'))
+  # shutil.rmtree(os.path.join(dir, 'share'))
+  pass
 
 def add_version_file(dir: str):
   with open(os.path.join(dir, 'VERSION'), 'w+') as f:
