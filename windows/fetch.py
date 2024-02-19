@@ -14,7 +14,7 @@ This program fetches MSYS2 packages from the MSYS2 repository, extracts them,
 and creates a nice directory structure and zip bundle with all the dependencies.
 """
 
-TOOLCHAIN_VERSION = '1.0.7-pre1'
+TOOLCHAIN_VERSION = '1.0.7'
 LLVM_VERSION='17.0.5'
 PYTHON_VERSION='python3.11'
 
